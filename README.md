@@ -12,4 +12,4 @@ What's covered
 - Grouping by month with `DATE_TRUNC`
 
 
-- All queries, grouped by topic, each with the question it answers
+
