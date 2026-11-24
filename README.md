@@ -1,6 +1,6 @@
 SQL Practice: dvdrental
 
-SQL practice queries written against the PostgreSQL **dvdrental** sample database, using DBeaver.
+SQL practice queries written against the PostgreSQL dvdrental sample database, using DBeaver.
 
 Part of my move into data analytics and data engineering.
 
