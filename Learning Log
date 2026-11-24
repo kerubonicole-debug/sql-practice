@@ -1,0 +1,110 @@
+Learning Log
+
+24 Nov 2026: dvdrental practice and fixing my queries
+
+What I learned:
+
+Before grouping by a date, decide the level you want (day, month or year) and cut the date down to it first. DATE_TRUNC('month', rental_date) groups by month and keeps the year. (Not covered properly yet, so I'm coming back to it.)
+Always GROUP BY the ID as well as the name (e.g. customer_id, first_name, last_name), so two people with the same name don't get merged.
+Only join the tables you actually need. In the category revenue query I could skip film and join film_category straight to inventory.
+DBeaver auto-commits by default, so UPDATE and DELETE can't be undone with Cmd + Z. Switch to manual commit to be able to ROLLBACK.
+
+What tripped me up:
+
+I grouped by rental_date, which is a full timestamp, so every second became its own group.
+I joined payment on customer_id instead of rental_id. That attached every payment a customer made to every film they rented, so all the totals were inflated.
+One query answered a different question from the one I'd written in the comment. Lesson: before writing, decide what the answer should look like: one number, one row per film, or one row per customer?
+Mixing aliased and unaliased tables in the same query.
+
+Revisit date functions when I get to them
+
+22 Nov 2026: first GROUP BY + JOIN query on dvdrental
+
+What I learned:
+
+Primary key = unique ID for each row (customer.customer_id)
+Foreign key = a column pointing to another table's primary key (rental.customer_id → customer)
+Composite key = two columns together as the key (film_category: film_id + category_id)
+JOIN ... ON matches a foreign key to a primary key, a bit like VLOOKUP
+INNER JOIN = only matches; LEFT JOIN = everything from the left table, plus matches
+If a column isn't inside COUNT/SUM/AVG, it must be in GROUP BY
+Pay attention to punctuation (commas and brackets) when creating tables
+
+What tripped me up:
+
+"Ambiguous column": both tables had category_id. Fix: write c.category_id
+"Must appear in GROUP BY": if a column isn't grouped, it has to be inside COUNT/SUM/AVG
+"Column count does not exist": COUNT needs brackets; name it with AS
+
+Query that finally worked:
+
+sql
+SELECT c.category_id, c.name, COUNT(fc.film_id) AS film_count
+FROM film_category fc
+JOIN category c ON fc.category_id = c.category_id
+GROUP BY c.category_id, c.name
+ORDER BY film_count DESC;
+
+22 Nov 2026: parked: self-joins
+
+Stuck on: "Which actors act in the same movies?"
+
+Why: My query shows one actor per row. The question needs two actors in one row.
+
+What I need to learn: A self-join means joining a table to itself, like using the same list twice, side by side.
+
+For now: Added ORDER BY f.title so actors in the same film show together.
+
+Come back: After CTEs and subqueries (week 3)
+
+Nov 2026: SQLBolt lessons 7–8: outer joins, NULLs and DISTINCT
+
+What I learned:
+
+Outer joins: LEFT JOIN, RIGHT JOIN, FULL JOIN
+When tables have asymmetric data (e.g. a brand with no products yet), use LEFT/RIGHT/FULL JOIN so nothing gets left out
+Whatever comes after FROM is the left table, and whatever comes after JOIN is the right table
+We mostly use LEFT JOIN because it's easier to read from left to right; a RIGHT JOIN can be rewritten as a LEFT JOIN by swapping the tables
+To check for missing values, use IS NULL / IS NOT NULL, never = NULL
+DISTINCT comes straight after SELECT
+
+What tripped me up:
+
+19 Nov 2026: sorting, LIMIT/OFFSET and INNER JOIN
+
+What I learned:
+
+DISTINCT removes duplicate rows, so you only see unique entries (still working on explaining it clearly)
+ORDER BY is used with ASC / DESC
+LIMIT = how many rows you want; OFFSET = how many rows you skip first
+Example: when you open Pinterest, the first screen shows the top 25 pins (LIMIT 25 OFFSET 0). When you scroll, it fetches the next 25 (LIMIT 25 OFFSET 25), skipping the first 25.
+Tables are combined with INNER JOIN, and ON says which columns link them (usually a primary key in one table to a foreign key in the other)
+Everything learned before (WHERE, ORDER BY, LIMIT) still works after a join
+
+What tripped me up:
+
+I keep writing SORT BY instead of ORDER BY
+
+New words:
+
+Normalisation: splitting data into separate tables to reduce duplicate data
+Lesson 7 was a real challenge: putting most of what I'd learned together in one query.
+
+18 Nov 2026: SELECT and WHERE
+
+What I learned:
+
+Simple SELECT queries
+Filtering rows with WHERE
+For numbers, WHERE uses =, >, <, BETWEEN ... AND, NOT BETWEEN ... AND
+For text: =, !=, LIKE, NOT LIKE, IN (...), NOT IN (...)
+Wildcards only work with LIKE: % = any number of characters, _ = exactly one character (e.g. LIKE '%text%')
+Text values need to be in quotes
+
+What tripped me up:
+
+Forgetting the quotes around text
+Forgetting the brackets around the list when using IN
+Looking back at my notes, I'd forgotten BETWEEN ... AND, NOT BETWEEN ... AND and NOT IN (...)
+
+I've used some operators more than others. I need more practice with
